@@ -43,6 +43,7 @@ TYPE_ZDISTANCE = 2
 TYPE_HOVER = 5
 TYPE_FULL_STATE = 6
 TYPE_POSITION = 7
+TYPE_CUSTOM_ALTITUDE = 8
 
 TYPE_META_COMMAND_NOTIFY_SETPOINT_STOP = 0
 
@@ -203,4 +204,19 @@ class Commander():
         pk.channel = SET_SETPOINT_CHANNEL
         pk.data = struct.pack('<Bffff', TYPE_POSITION,
                               x, y, z, yaw)
+        self._cf.send_packet(pk)
+
+    def send_custom_altitude_setpoint(self, roll, pitch, yaw, height):
+        """
+        Control mode where the height is send as an absolute setpoint (intended
+        to be the distance to the surface under the Crazflie)
+
+        roll, pitch and yaw are in degrees
+        yaw is absolute
+        """
+        pk = CRTPPacket()
+        pk.port = CRTPPort.COMMANDER_GENERIC
+        pk.channel = SET_SETPOINT_CHANNEL
+        pk.data = struct.pack('<Bffff', TYPE_CUSTOM_ALTITUDE,
+                            roll, pitch, yaw, height)
         self._cf.send_packet(pk)
